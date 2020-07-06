@@ -12,7 +12,9 @@ clc ; clear all ; close all ;
 
 localDir = fileparts(mfilename('fullpath')) ;
 restoredefaultpath ;
-addpath(fullfile(localDir, 'active_functions')) ;
+root_idx = strfind(localDir, '/') ; 
+root = localDir(1:root_idx(end)-1) ; 
+addpath(fullfile(root, 'active_functions')) ;
 
 %% MPA
 
