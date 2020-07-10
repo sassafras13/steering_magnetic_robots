@@ -1,7 +1,8 @@
-% MAIN_CoilModel.m
-% Purpose: Characterizes the magnetic field and magnetic field gradient
-% produced by a pair of Helmholtz or Maxwell coils. For comparison with other models to
-% prove it is a robust model. 
+% MAIN_03_CoilModel.m
+% Purpose: Characterizes the magnetic field and magnetic field gradient 
+% produced by a pair of Helmholtz or Maxwell coils. For comparison with 
+% other models to prove it is a robust model. Also compares model to some 
+% experimental data.
 % Author: Emma Benjaminson
 
 %% 
@@ -14,36 +15,18 @@ localDir = fileparts(mfilename('fullpath')) ;
 restoredefaultpath ;
 addpath(fullfile(localDir, 'active_functions')) ;
 
-%% Setup
+%% Load Variables
 
-mu0 = 4*pi*(10^(-7)) ; % [N/A^2] magnetic permeability
+run(fullfile(localDir,'VAR_SingleLinkModelCoil.m')) ; 
+
+%% Setup
 
 % coil dimensions 
 I1 = 1.9 ; % [A] current
 I2 = 0 ; % [A] current
-a = (0.136 / 2) ; % [m] radius of coils
-% d = a/2 ; % [m] Helmholtz separation of coils
-d = sqrt(3)*(a/2) ; % [m] Maxwell separation of coils
-nturns = 320 ; % number of turns
 coils = [I1 ; I2 ; a ; d ; nturns] ; 
 
-% position array for calculations and plotting
-% field plotting
-dx = 0.001 ; % [m]
-xmin = -1.5*d ; % [m]
-xmax = 1.5*d ; % [m]
-ymin = 0.01 ; % [m]
-ymax = 1.5*a ; % [m]
-positionArrayField = [dx ; xmin ; xmax ; ymin ; ymax] ; 
-
-% gradient plotting
-xmingrad = -0.9*d ; % [m]
-xmaxgrad = 0.9*d ; % [m]
-ymingrad = 0.01 ; % [m]
-ymaxgrad = 0.9*d ; % [m]
-positionArrayGrad = [dx ; xmingrad ; xmaxgrad ; ymingrad ; ymaxgrad] ; 
-
-%% Function Calls
+%% Compute Magnetic Field
 
 %%%%%%%%%%%%%%%%
 % magnetic field
@@ -58,11 +41,10 @@ Bxcheck = Bxcheck * 1E3; % convert to mT
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 n = 26 ; % size of position vector
-gBmax = 10 ; % [?] highest value of magnetic field gradient allowed
+gBmax = 10 ; % [] highest value of magnetic field gradient allowed
 [gx2, gy2, gBx, gBy, gB] = magGradientCoil(coils,mu0,positionArrayGrad,n,gBmax) ; 
-% gB = gB*1E6 ; % convert 
 
-%% Experimental Data 
+%% Load Experimental Data for Check
 
 % board-fridge
 selpath = '/home/emma/Documents/Research/TP7' ; 

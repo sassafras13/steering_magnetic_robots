@@ -5,7 +5,11 @@ Code supporting IROS 2020 paper "Steering Magnetic Robots in Two Axes with One P
 
 These files are the main functions for performing different calculations.    
 
-**(1) MAIN_CoilModel :-** Characterizes the magnetic field and magnetic field gradient produced by a pair of Helmholtz or Maxwell coils. For comparison with other models to prove it is a robust model.    
+**(1) MAIN_BFieldDataProcessing :-** Computes the mean and standard deviation for a set of data characterizing the magnetic field. Saves the values to a csv file. Plots the data and compares to theoretical values. 
+
+**(2) MAIN_ExpDataProcessing :-** Process the experimental data and save the average values and standard deviations to a csv file for future use.
+
+**(3) MAIN_CoilModel :-** Characterizes the magnetic field and magnetic field gradient produced by a pair of Helmholtz or Maxwell coils. For comparison with other models to prove it is a robust model. Also compares model to some experimental data.    
 
 **(2) MAIN_SingleLinkModelCoil :-** Model the motion of a single link microswimmer in a magnetic field produced by a pair of Helmholtz or Maxwell coils. For comparison with experimental results to show model is accurate.   
 

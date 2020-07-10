@@ -1,4 +1,4 @@
-% VAR_BFieldDataProcessing.m
+% 00_VAR_BFieldDataProcessing.m
 % Contains variables for use in MAIN_BFieldDataProcessing.m
 
 %% environment properties

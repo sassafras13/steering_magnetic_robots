@@ -2,12 +2,6 @@
 % Contains variables for use in MAIN_SingleLinkModelCoil.m
 
 %% microswimmer properties
-% w = 1 ; % [mm] width of macroswimmer
-% L = 10 ; % [mm] length of macroswimmer
-% h = 5 ; % [mm] height of macroswimmer
-% mass = 1 ; % [g] mass of macroswimmer
-% mag = 255 ; % [Amm2] magnetic moment of macroswimmer (obtained experimentally)
-
 w = 0.001 ; % [m] width of macroswimmer
 L = 0.010 ; % [m] length of macroswimmer
 h = 0.005 ; % [m] height of macroswimmer
@@ -25,9 +19,6 @@ mu0 = 4*pi*(10^(-7)) ; % [N/A^2] magnetic permeability
 a = (0.136 / 2) ; % [m] radius of coils
 d = sqrt(3)*(a/2) ; % [m] Maxwell separation of coils
 nturns = 320 ; % number of turns
-% I1 = 1.9 ; % [A]
-% I2 = 0 ; % [A]
-% coils = [I1 ; I2 ; a ; d ; nturns] ; 
 
 %% position array for calculations and plotting
 % field plotting
@@ -54,4 +45,4 @@ positionArrayGrad = [dx ; xmingrad ; xmaxgrad ; ymingrad ; ymaxgrad] ;
 
 %% max value of B fields
 Bmax = 0.01; % [T] highest value of magnetic field allowed
-gBmax = 10;  % [?] highest value of magnetic field gradient allowed
+gBmax = 10;  % [] highest value of magnetic field gradient allowed

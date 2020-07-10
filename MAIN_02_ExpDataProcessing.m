@@ -1,8 +1,7 @@
-% MAIN_ExpDataProcessing.m
+% MAIN_02_ExpDataProcessing.m
 % Purpose: Process the experimental data and save the average values and
 % standard deviations to a csv file for future use.
 % Author: Emma Benjaminson
-% References: 
 
 %% 
 
@@ -12,11 +11,9 @@ clc ; clear all ; close all ;
 
 localDir = fileparts(mfilename('fullpath')) ;
 restoredefaultpath ;
-root_idx = strfind(localDir, '/') ; 
-root = localDir(1:root_idx(end)-1) ; 
-addpath(fullfile(root, 'active_functions')) ;
+addpath(fullfile(localDir, 'active_functions')) ;
 
-%% MPA
+%% Motion Primitive A
 
 directory = '/home/emma/Documents/Research/TP12/Motion Primitives/For Analysis' ; 
 filename = 'mpA' ; 
@@ -30,7 +27,7 @@ outputname = 'mpA-CompositeData' ;
     directory, filename, outputname) ; 
 
 
-%% MPB
+%% Motion Primitive B
 
 directory = '/home/emma/Documents/Research/TP12/Motion Primitives/For Analysis' ; 
 filename = 'mpB' ; 
