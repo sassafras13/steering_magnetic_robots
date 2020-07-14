@@ -2,7 +2,6 @@
 % Purpose: Use gradient descent to calculate the drag coefficient for the
 % macroswimmer.
 % Author: Emma Benjaminson
-% References: 
 
 %% 
 
@@ -18,17 +17,20 @@ addpath(fullfile(localDir, 'active_functions')) ;
 
 % load macroswimmer data
 run VAR_SingleLinkModelCoil.m ; 
-load('gBarray.mat') ; 
-load('Barray.mat') ; 
+load('MAT_gBarray.mat') ; 
+load('MAT_Barray.mat') ; 
 
-% load experimental data
-directory = sprintf('%s/TP12',localDir) ; 
+% load experimental data indices of origins
+directory = '/home/emma/Documents/Research/TP12/Motion Primitives/For Analysis' ; 
+% directory = sprintf('%s/TP12',localDir) ; 
 % directory = '/home/biorobotics/microswimmers/Gradient Steering/TP12' ; 
-filename = 'mpB' ; 
+filename = 'mpA' ; 
 [indices, origins] = extractIndOr(directory,filename) ; 
-% filename = 'tp12_mpA_iter' ; 
-filename = 'mpB-CompositeData' ; 
-loadExpData(indices, origins, directory, filename, 0)
+
+% load all experimental data for a particular motion primitive
+% filename_exp_data = 'tp12_mpA_iter' ; 
+filename_exp_data = 'mpA-CompositeData' ; 
+loadExpData(indices, origins, directory, filename_exp_data, 0)
 
 %%%%%%%%%% USER DEFINED VALUE %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % select experimental data
@@ -36,7 +38,7 @@ loadExpData(indices, origins, directory, filename, 0)
 
 % waypoint times - when the swimmer changes direction
 % waypointT = [0,225,470,670] ; % [s] 
-waypointT = [0,170] ; % [s] 
+waypointT = [0,170] ; % [s] for mpA
 
 % n = size(posx{index},1) ; % number of points 
 % n = 47 ;
@@ -49,15 +51,15 @@ niter = 1 ;
 y0 = [meanposx(1,1) ; meanposy(1,1) ; pi/2 ; 0 ; 0 ; 0 ]  ;
 
 % control inputs
-I1 = [0] ; % [A] current
-I2 = [1.9] ; % [A] current
+I1 = [1.9] ; % [A] current
+I2 = [0] ; % [A] current
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %% Gradient Descent Loop
 
-theta_new = 1E-1 ; % starting guess for theta
+theta_new = 0.3E-1 ; % starting guess for theta
 theta_old = 0 ; % this parameter will store old values for gradient descent update
 
 i = 1 ; % iteration counter
@@ -88,7 +90,7 @@ while i < min_iter
 
     % run ode15s for the same time span as the experimental data that we have,
     % and the current drag coefficient
-    [x,y] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_old,Barray{2},gBarray{2}) ;
+    [x,y] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_old,Barray{1},gBarray{1}) ;
     
     % plot hypothesis and variations
     figure(1)
@@ -112,14 +114,14 @@ while i < min_iter
     
     % plus
     theta_plus = theta_old + eps_perturb ; 
-    [xplus,yplus] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_plus,Barray{2},gBarray{2}) ; 
+    [xplus,yplus] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_plus,Barray{1},gBarray{1}) ; 
     J_plus = costFunc([xplus,yplus],[meanposx,meanposy]) ; 
     
     disp('\n RUNNING CALCULATION FOR H MINUS. \n') ; 
     
     % minus
     theta_minus = theta_old - eps_perturb ; 
-    [xminus,yminus]  = hsim(niter,waypointT,y0,mag,mass,w,L,theta_minus,Barray{2},gBarray{2}) ; 
+    [xminus,yminus]  = hsim(niter,waypointT,y0,mag,mass,w,L,theta_minus,Barray{1},gBarray{1}) ; 
     J_minus = costFunc([xminus,yminus],[meanposx,meanposy]) ; 
     
     % plot variations on hypothesis
@@ -152,7 +154,7 @@ while i < min_iter
         
         % forward simulate dynamics
         disp('Calculating dynamics to update alpha') ; 
-        [x,y] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_new,Barray{2},gBarray{2}) ;
+        [x,y] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_new,Barray{1},gBarray{1}) ;
         
         % calculate new cost function
         Jnew = costFunc([x,y],[meanposx,meanposy]) ; 

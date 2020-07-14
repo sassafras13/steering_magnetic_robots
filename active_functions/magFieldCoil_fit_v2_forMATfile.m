@@ -1,4 +1,4 @@
-function B_final = magFieldCoil_fit_v2(c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y)
+function [gx, gy, Bx, By, B, gBx, gBy, gB] = magFieldCoil_fit_v2_forMATfile(c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y)
     % magFieldCoil_fit Calculate the magnetic field created by a pair of 
     % wire coils with current flowing through them via the Biot-Savart law.
     % For use with Matlab fit() function to find optimal fit parameters.
@@ -61,33 +61,18 @@ function B_final = magFieldCoil_fit_v2(c1, c2, I1, I2, a, nturns, mu0, Bmax, x, 
     
     Bx = reshape(Bx,size(gx,1),size(gx,2)) ; 
     Bx = c1 * Bx ; 
-%     Bx = [Bx(end:-1:2,:) ; Bx] ; 
     
     By = reshape(By,size(gx,1),size(gx,2)) ; 
     By = fillmissing(By,'constant',0) ; 
     By = c2 * By ; 
-%     By = [By(end:-1:2,:) ; By] ; 
     
     B = sqrt(Bx.^2 + By.^2) ;
-%     B = reshape(B, size(B,1), size(B,2)) ; 
+
+    B(B>Bmax) = Bmax ; 
     
-%     gx = [gx(end:-1:2,:) ; gx] ; 
-%     gy = [gy ; -gy(end-1:-1:1,:)] ; 
-%     B = sign(Bx).*B ; 
+    % calculate the gradient
+    [gBx, gBy] = gradient(B, gx(1, :), gy(:, 1)) ; % [T]
     
-%     xval = linspace(xmin,xmax,size(Bx,2)) ; 
-%     yval = linspace(-ymax,ymax,size(Bx,1)) ; 
-%     [gx,gy] = meshgrid(xval,yval) ; 
-    
-    % test along the x axis where we know the solution
-%     Bxcheck = zeros(size(gx,2),1) ; 
-%     for i = 1:size(gx,2)
-%         x = gx(1,i) ; 
-%         Bxcheck(i) = 0.5*nturns*mu0*I1*(a^2)*(coeff1*(1 /(sqrt(a^2 + (x-d)^2))^3) + coeff2*(1 /(sqrt(a^2 + (x+d)^2))^3)) ;
-% %         Bxcheck(i) = 0.5*nturns*mu0*I1*(a^2)*((1 /(sqrt(a^2 + (x-d)^2))^3) + (1 /(sqrt(a^2 + (x+d)^2))^3)) ;
-%     end
-    
-    B_final = interp2(gx, gy, B, x, y) ; 
-    B_final(B_final>Bmax) = Bmax ; 
+    gB = sqrt( gBx.^2 + gBy.^2 ) ; % [T]
 
 end

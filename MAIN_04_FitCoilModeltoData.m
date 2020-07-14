@@ -33,7 +33,8 @@ filenameGeneric = 'u1_1_9_u2_0' ;
 % filenameGeneric = 'u1_1_9_u2_1_9' ; 
 % filenameGeneric = 'u1_1_9_u2_-1_9' ; 
 
-nfiles = 5 ;
+nfiles = 5 ; % for u1_1_9_u2_0
+% nfiles = 4 ; % for u1_1_9_u2_1_9
 
 % calculate standard deviation and average values for each point
 processBFieldData(directory,filenameGeneric,nfiles) ; 
@@ -52,13 +53,13 @@ ft = fittype( 'magFieldCoil_fit( I1, I2, a, nturns, mu0, Bmax, x, y )',...
     'problem', {'mu0', 'Bmax'})
 
 f = fit( [x, y], B, ft, 'problem', {mu0, Bmax},...
-    'StartPoint', [1.9, 0, 0.0680, 320])
+    'StartPoint', [1.9, 1.9, 0.0680, 320])
 
 ft2 = fittype( 'magFieldCoil_fit_v2( c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y )', ...
     'independent', {'x', 'y'}, 'dependent', 'B_final', ...
     'problem', {'I1', 'I2', 'a', 'nturns', 'mu0', 'Bmax'})
 
-f2 = fit( [x, y], B, ft, 'probem', {I1, I2, a, nturns, mu0, Bmax})
+f2 = fit( [x, y], B, ft2, 'problem', {I1 , I2 , a , nturns , mu0 , Bmax})
 %% Plot Results
 
 % best fit found by fit()
@@ -69,7 +70,16 @@ B_fit = magFieldCoil_fit( 1.901, -0.05156, 0.08196, 320, mu0, Bmax,...
     x_fit, y_fit ) ; 
 
 % best fit found by fit_2()
-B_fit2 = magFieldCoil_fit_v2(c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y)
+
+% for u1_1_9_u2_0
+c1 = 0.8014 ; 
+c2 = 0.2144 ; 
+
+% % for u1_1_9_u1_9
+% c1 = 0.003066 ; 
+% c2 = 0.004399 ; 
+
+B_fit2 = magFieldCoil_fit_v2( c1, c2, I1, I2, a, nturns, mu0, Bmax, x_fit, y_fit ) ; 
 
 % model with no fit
 [gx, gy, Bx, By, B_model, Bxcheck] = magFieldCoil(coils,mu0,...
@@ -78,13 +88,16 @@ B_fit2 = magFieldCoil_fit_v2(c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y)
 figure(2)
 plot3(x, y, B, 'or', 'MarkerSize', 6, 'MarkerFaceColor', 'r') % mean experimental data
 hold on
-surf(reshape(x_fit, 41, 36), reshape(y_fit, 41, 36), reshape(B_fit, 41, 36),...
-    'FaceAlpha',0.5,'EdgeColor','k','FaceColor','#7AEA86') % best fit
+% surf(reshape(x_fit, 41, 36), reshape(y_fit, 41, 36), reshape(B_fit, 41, 36),...
+%     'FaceAlpha',0.5,'EdgeColor','k','FaceColor','#7AEA86') % best fit
+% hold on
+% surf(gx, gy, B_model, 'FaceAlpha',0.5,'EdgeColor','k',...
+%     'FaceColor','#52639e') % model with no fit
+% hold on
+surf(reshape(x_fit, 41, 36), reshape(y_fit, 41, 36), reshape(B_fit2, 41, 36),...
+    'FaceAlpha',0.5,'EdgeColor','k','FaceColor','#EA7AE3') % best fit 2
 hold on
-surf(gx, gy, B_model, 'FaceAlpha',0.5,'EdgeColor','k',...
-    'FaceColor','#52639e') % model with no fit
-hold on
-legend('Mean Exp Data', 'Model with Best Fit', 'Model with No Fit')
+legend('Mean Exp Data', 'Model with Scaled Fit')
 xlabel('Z (m)','Interpreter','latex','FontSize',32) ; 
 ylabel('X (m)','Interpreter','latex','FontSize',32) ; 
 zlabel('B (T)','Interpreter','latex','FontSize',32) ; 

@@ -11,27 +11,40 @@ These files are the main functions for performing different calculations.
 
 **(3) MAIN_CoilModel :-** Characterizes the magnetic field and magnetic field gradient produced by a pair of Helmholtz or Maxwell coils. For comparison with other models to prove it is a robust model. Also compares model to some experimental data.    
 
-**(2) MAIN_SingleLinkModelCoil :-** Model the motion of a single link microswimmer in a magnetic field produced by a pair of Helmholtz or Maxwell coils. For comparison with experimental results to show model is accurate.   
+**(4) MAIN_FitCoilModeltoData :-** Fit the model of the Maxwell coils and their resultant magnetic field to the experimental data.
 
-**(3) MAIN_DragGradDescent :-** Uses gradient descent to find value of drag coefficient that best fits experimental data.   
 
-**(4) MAIN_PlotDynamics :-** Script that contains code to generate multiple plots as desired for paper.    
+**(5) MAIN_GenerateFieldData :-** Generate an array of values for the magnetic field and magnetic field gradient after the optimal fit parameters have been found. 
 
-**(5) MAIN_SwitchingTimeOpt_SingleLinkModelCoil_WithCost :-** Implementation of switching time optimization.   
+**(6) MAIN_DragGradDescent :-** Uses gradient descent to find value of drag coefficient that best fits experimental data.   
 
-**(6) MAIN_SwitchingTimeOpt_SingleLinkModelCoil_WithCost_Case3 :-** Implementation of switching time optimization for test case 3.    
+**(7) MAIN_DynamicsModel :-** Uses ode15s to simulate the dynamics of the swimmer given the drag coefficient and magnetic field model computed earlier. 
 
-**(7) MAIN_SwitchingTimeOpt_SingleLinkModelCoil_WithCost_Manual_dJdt :-** Implementation of switching time optimization with manual check of gradient of cost function.
+**(8) MAIN_PlotDynamics :-** Script that contains code to generate multiple plots as desired for paper.    
+
+**MAIN_SwitchingTimeOpt_SingleLinkModelCoil_WithCost :-** Implementation of switching time optimization.   
+
+**MAIN_SwitchingTimeOpt_SingleLinkModelCoil_WithCost_Case3 :-** Implementation of switching time optimization for test case 3.    
+
+**MAIN_SwitchingTimeOpt_SingleLinkModelCoil_WithCost_Manual_dJdt :-** Implementation of switching time optimization with manual check of gradient of cost function.
+
+**MAIN_ReynoldsNumber :-** Used to compute the Reynolds number for this work and comparative examples in literature. 
 
 ## Folders
 
-**(1) active_functions :-** contains the functions currently being used in the various MAIN scripts.    
+**(1) active_functions :-** contains the functions currently being used in the various MAIN scripts.       
 
-**(2) Experiment Data Processing :-** contains scripts for processing experimental data obtained in experiments.    
+**(2) script_archive :-** contains old scripts no longer in use.
 
 ## VAR Files
 
 Scripts beginning with VAR contain parameters used by multiple scripts. These parameters describe the Maxwell coil parameters and other relevant values of commonly used variables in the models.
+
+## Important Parameters
+
+**(1) Fit Parameters for Magnetic Field Model :-** c1 = 0.8014 ; c2 = 0.2144 
+
+**(2) Drag Coefficient :-** 0.0250
 
 ## Workflow for Analyzing Motion Primitives
 

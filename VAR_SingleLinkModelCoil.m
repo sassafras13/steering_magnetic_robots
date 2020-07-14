@@ -7,7 +7,9 @@ L = 0.010 ; % [m] length of macroswimmer
 h = 0.005 ; % [m] height of macroswimmer
 mass = 0.001 ; % [kg] mass of macroswimmer
 mag = 2.55E-4 ; % [Am2] magnetic moment of macroswimmer (obtained experimentally)
-drag = 0.0471 ; % [] drag coefficient FIT PARAMETER
+% drag = 0.0471 ; % [] drag coefficient FIT PARAMETER
+drag = 0.0326 ; % drag coefficient
+% drag = 0.0250 ; % drag coefficient
 ct = drag ; 
 cn = 2*ct ; 
 
