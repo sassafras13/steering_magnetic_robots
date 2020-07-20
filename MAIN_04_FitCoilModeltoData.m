@@ -60,6 +60,12 @@ ft2 = fittype( 'magFieldCoil_fit_v2( c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y 
     'problem', {'I1', 'I2', 'a', 'nturns', 'mu0', 'Bmax'})
 
 f2 = fit( [x, y], B, ft2, 'problem', {I1 , I2 , a , nturns , mu0 , Bmax})
+
+ft3 = fittype( 'magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, I1, I2, a, nturns, mu0, Bmax, x, y)',...
+    'independent', {'x', 'y'}, 'dependent', 'B_final', ...
+    'problem', {'I1', 'I2', 'a', 'nturns', 'mu0', 'Bmax'})
+
+f3 = fit( [x, y], B, ft3, 'problem', {I1, I2, a, nturns, mu0, Bmax})
 %% Plot Results
 
 % best fit found by fit()
@@ -75,11 +81,26 @@ B_fit = magFieldCoil_fit( 1.901, -0.05156, 0.08196, 320, mu0, Bmax,...
 c1 = 0.8014 ; 
 c2 = 0.2144 ; 
 
-% % for u1_1_9_u1_9
-% c1 = 0.003066 ; 
-% c2 = 0.004399 ; 
-
 B_fit2 = magFieldCoil_fit_v2( c1, c2, I1, I2, a, nturns, mu0, Bmax, x_fit, y_fit ) ; 
+
+% best fit found by fit_3()
+
+% for u1_1_9_u2_0
+c0 = 0.8026 ; 
+c1 = 2.347 ; 
+c2 = 0.7705 ; 
+c3 = 0.2539 ; 
+c4 = 51.86 ; 
+c5 = -153.3 ; 
+c6 = 1.412 ; 
+c7 = -4.613 ; 
+c8 = 1.052 ; 
+c9 = 30.29 ; 
+c10 = -83.28 ; 
+c11 = -179.9 ; 
+
+B_fit3 = magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, c6, c7, ...
+    c8, c9, c10, c11, I1, I2, a, nturns, mu0, Bmax, x_fit, y_fit) ; 
 
 % model with no fit
 [gx, gy, Bx, By, B_model, Bxcheck] = magFieldCoil(coils,mu0,...
@@ -94,8 +115,11 @@ hold on
 % surf(gx, gy, B_model, 'FaceAlpha',0.5,'EdgeColor','k',...
 %     'FaceColor','#52639e') % model with no fit
 % hold on
-surf(reshape(x_fit, 41, 36), reshape(y_fit, 41, 36), reshape(B_fit2, 41, 36),...
-    'FaceAlpha',0.5,'EdgeColor','k','FaceColor','#EA7AE3') % best fit 2
+% surf(reshape(x_fit, 41, 36), reshape(y_fit, 41, 36), reshape(B_fit2, 41, 36),...
+%     'FaceAlpha',0.5,'EdgeColor','k','FaceColor','#EA7AE3') % best fit 2
+% hold on
+surf(reshape(x_fit, 41, 36), reshape(y_fit, 41, 36), reshape(B_fit3, 41, 36),...
+    'FaceAlpha',0.5,'EdgeColor','k','FaceColor','#EA7AE3') % best fit 3
 hold on
 legend('Mean Exp Data', 'Model with Scaled Fit')
 xlabel('Z (m)','Interpreter','latex','FontSize',32) ; 

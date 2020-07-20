@@ -288,12 +288,12 @@ yind1 = [10,20,30,500,700] ;
 yind2 = [400,750,950] ; 
 yind3 = [1,600,660,680] ; 
 
-% % import s1-CompositeData for plotting experimental data
-% data = readtable('/home/emma/repos/microswimmers/Gradient Steering/TP12/mpA-CompositeData.csv') ; 
-% data = table2array( data(1:end, 1:(end-1)) ) ; 
+% import s1-CompositeData for plotting experimental data
+data = readtable('/home/emma/repos/microswimmers/Gradient Steering/TP12/mpA-CompositeData.csv') ; 
+data = table2array( data(1:end, 1:(end-1)) ) ; 
 
 color = '#52639e' ; 
-ntraj = 1 ; 
+ntraj = 3 ; 
 wp = [1,13,22,40] ; 
 
 % gradient plotting
@@ -308,7 +308,6 @@ positionArrayGrad = [dx ; xmingrad ; xmaxgrad ; ymingrad ; ymaxgrad] ;
 % n = 10 ; % size of position vector
 % [gx2, gy2, gBx, gBy, ~] = magGradientCoil(coils1,mu0,positionArrayGrad,n,gBmax) ; 
 
-
 figure(nfig) 
 plotExpData(meanposx, meanposy, stdposx, stdposy, nfig, ntraj, wp, color) ; 
 hold on 
@@ -316,25 +315,34 @@ hold on
 % hold on
 plot(yarray{1}(:,1),yarray{1}(:,2),'-r','LineWidth',2) 
 hold on
-% plot(yarray{2}(:,1),yarray{2}(:,2),'-r','HandleVisibility','off','LineWidth',2) 
-% hold on
-% plot(yarray{3}(:,1),yarray{3}(:,2),'-r','HandleVisibility','off','LineWidth',2) 
-% hold on
-% plotSwimmer(nfig,yarray{1},yind1,1) ; 
-% hold on
-% plotSwimmer(nfig,yarray{2},yind2,0) ; 
-% hold on
-% plotSwimmer(nfig,yarray{3},yind3,1) ; 
-% hold on
+plot(yarray{2}(:,1),yarray{2}(:,2),'-r','HandleVisibility','off','LineWidth',2) 
+hold on
+plot(yarray{3}(:,1),yarray{3}(:,2),'-r','HandleVisibility','off','LineWidth',2) 
+hold on
+plotSwimmer(nfig,yarray{1},yind1,1) ; 
+hold on
+plotSwimmer(nfig,yarray{2},yind2,0) ; 
+hold on
+plotSwimmer(nfig,yarray{3},yind3,1) ; 
+hold on
+
+load('MAT_Dynamics_case1') ; 
+
+plot(yarray{1}(:,1),yarray{1}(:,2),'--r', 'LineWidth',2) 
+hold on
+plot(yarray{2}(:,1),yarray{2}(:,2),'--r', 'HandleVisibility','off','LineWidth',2) 
+hold on
+plot(yarray{3}(:,1),yarray{3}(:,2),'--r', 'HandleVisibility','off','LineWidth',2) 
+hold on
 ax = gca ; 
 ax.FontSize = 14 ; 
 xlabel('Z (m)','interpreter','latex','FontSize',32) ; 
 ylabel('X (m)','interpreter','latex','FontSize',32) ; 
-title('Case 1: Results','interpreter','latex','FontSize',32) ; 
-legend('Experimental Data','Model','interpreter','latex','FontSize',20) ;
+% title('Case 1: Results','interpreter','latex','FontSize',32) ; 
+legend('Experimental Data','Model','Fitted Model','interpreter','latex','FontSize',20) ;
 legend boxon
 grid on
-% axis([-0.03,xmaxgrad,ymingrad,ymaxgrad]) ; 
+axis([-0.03,0.015,0.02,0.04]) ; 
 
 % %% FIGURE 8: Swimmer with orientation overlaid (USED TO GENERATE FIGURE 1 IN IROS 2020)
 % 

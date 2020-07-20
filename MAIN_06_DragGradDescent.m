@@ -59,7 +59,7 @@ I2 = [0] ; % [A] current
 
 %% Gradient Descent Loop
 
-theta_new = 0.3E-1 ; % starting guess for theta
+theta_new = 0.4E-1 ; % starting guess for theta
 theta_old = 0 ; % this parameter will store old values for gradient descent update
 
 i = 1 ; % iteration counter

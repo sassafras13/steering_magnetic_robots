@@ -1,6 +1,6 @@
 function plotSwimmer(nfig,y,yind,dirB)
 
-    len = 0.005 ; 
+    len = 0.002 ; 
     Bx1 = y(yind,1) - len*cos(y(yind,3)) ; 
     By1 = y(yind,2) - len*sin(y(yind,3)) ; 
     Ax1 = y(yind,1) + len*cos(y(yind,3)) ; 
@@ -15,9 +15,11 @@ function plotSwimmer(nfig,y,yind,dirB)
     end
     
     figure(nfig)
-    plot([Bx1';y(yind,1)'],[By1';y(yind,2)'],'-','LineWidth',5,'Color',color1) ; 
+    plot([Bx1';y(yind,1)'],[By1';y(yind,2)'],'-','LineWidth',5,...
+        'Color',color1,'HandleVisibility','off') ; 
     hold on
-    plot([y(yind,1)';Ax1'],[y(yind,2)';Ay1'],'-','LineWidth',5,'Color',color2) ; 
+    plot([y(yind,1)';Ax1'],[y(yind,2)';Ay1'],'-','LineWidth',5,...
+        'Color',color2,'HandleVisibility','off') ; 
     hold on
 
 end

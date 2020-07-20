@@ -64,13 +64,34 @@ for i = 1:niter
     %%%%%%%%%%%%%%%%
     % magnetic field
     %%%%%%%%%%%%%%%%
+    
+    % best fit found by fit_3()
+
     % for u1_1_9_u2_0
-    c1 = 0.8014 ; 
-    c2 = 0.2144 ; 
+    c0 = 0.8026 ; 
+    c1 = 2.347 ; 
+    c2 = 0.7705 ; 
+    c3 = 0.2539 ; 
+    c4 = 51.86 ; 
+    c5 = -153.3 ; 
+    c6 = 1.412 ; 
+    c7 = -4.613 ; 
+    c8 = 1.052 ; 
+    c9 = 30.29 ; 
+    c10 = -83.28 ; 
+    c11 = -179.9 ; 
 
     [x_B, y_B, Bx, By, B, gBx, gBy, gB] = ...
-        magFieldCoil_fit_v2_forMATfile( c1, c2, I1(i), I2(i), a, nturns,...
-        mu0, Bmax, x_fit, y_fit ) ; 
+        magFieldCoil_fit_v3_forMATfile(c0, c1, c2, c3, c4, c5, c6, c7, ...
+        c8, c9, c10, c11, I1(i), I2(i), a, nturns, mu0, Bmax, x_fit, y_fit) ; 
+
+%     % for u1_1_9_u2_0
+%     c1 = 0.8014 ; 
+%     c2 = 0.2144 ; 
+% 
+%     [x_B, y_B, Bx, By, B, gBx, gBy, gB] = ...
+%         magFieldCoil_fit_v2_forMATfile( c1, c2, I1(i), I2(i), a, nturns,...
+%         mu0, Bmax, x_fit, y_fit ) ; 
     
     temp_B = zeros(size(x_B,1),size(x_B,2),5) ; % create a 3D array 
     
