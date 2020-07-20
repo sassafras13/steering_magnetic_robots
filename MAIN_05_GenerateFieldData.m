@@ -68,22 +68,16 @@ for i = 1:niter
     % best fit found by fit_3()
 
     % for u1_1_9_u2_0
-    c0 = 0.8026 ; 
-    c1 = 2.347 ; 
-    c2 = 0.7705 ; 
-    c3 = 0.2539 ; 
-    c4 = 51.86 ; 
-    c5 = -153.3 ; 
-    c6 = 1.412 ; 
-    c7 = -4.613 ; 
-    c8 = 1.052 ; 
-    c9 = 30.29 ; 
-    c10 = -83.28 ; 
-    c11 = -179.9 ; 
+    c0 = 0.7919 ; 
+    c1 = 0.2239 ; 
+    c2 = -0.1472 ; 
+    c3 = 0.08785 ; 
+    c4 = 0.498 ; 
+    c5 = 2.249 ; 
 
     [x_B, y_B, Bx, By, B, gBx, gBy, gB] = ...
-        magFieldCoil_fit_v3_forMATfile(c0, c1, c2, c3, c4, c5, c6, c7, ...
-        c8, c9, c10, c11, I1(i), I2(i), a, nturns, mu0, Bmax, x_fit, y_fit) ; 
+        magFieldCoil_fit_v3_forMATfile(c0, c1, c2, c3, c4, c5, ...
+        I1(i), I2(i), a, nturns, mu0, Bmax, x_fit, y_fit) ; 
 
 %     % for u1_1_9_u2_0
 %     c1 = 0.8014 ; 
@@ -110,26 +104,26 @@ for i = 1:niter
     temp_gB(:,:,5) = gB ; 
     gBarray{i} = temp_gB ; 
 %     
-%     figure(1)
-%     surf(x_B,y_B,B) ; 
+    figure(1)
+    surf(x_B,y_B,B) ; 
 %     
     % check the gradient is similar to my model with no fitting
     n = 26 ; % size of position vector
     [x_gB, y_gB, gBxtest, gBytest, gBtest] = magGradientCoil(coils,mu0,positionArrayGrad,n,gBmax) ; 
 
-%     figure(2)
-%     quiver(x_gB,y_gB,gBxtest,gBytest,3) ;
-%     hold on
-%     axis([-(d+0.01),(d+0.01),-(d+0.01),(d+0.01)])
-%     hold on
-%     quiver(x_B, y_B, gBx, gBy, 3) ; 
-%     hold on 
-%     legend('Model with No Fitting', 'Model with Fitting')
-%     title('Magnetic Field Gradient Check')
-%     xlabel('X (m)') ; ylabel('Y (m)') 
-%     hold on
-%     
-%     pause
+    figure(2)
+    quiver(x_gB,y_gB,gBxtest,gBytest,3) ;
+    hold on
+    axis([-(d+0.01),(d+0.01),-(d+0.01),(d+0.01)])
+    hold on
+    quiver(x_B, y_B, gBx, gBy, 3) ; 
+    hold on 
+    legend('Model with No Fitting', 'Model with Fitting')
+    title('Magnetic Field Gradient Check')
+    xlabel('X (m)') ; ylabel('Y (m)') 
+    hold on
+    
+    pause
 end
 
 %% Save Data

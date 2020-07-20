@@ -61,7 +61,7 @@ ft2 = fittype( 'magFieldCoil_fit_v2( c1, c2, I1, I2, a, nturns, mu0, Bmax, x, y 
 
 f2 = fit( [x, y], B, ft2, 'problem', {I1 , I2 , a , nturns , mu0 , Bmax})
 
-ft3 = fittype( 'magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, I1, I2, a, nturns, mu0, Bmax, x, y)',...
+ft3 = fittype( 'magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, I1, I2, a, nturns, mu0, Bmax, x, y)',...
     'independent', {'x', 'y'}, 'dependent', 'B_final', ...
     'problem', {'I1', 'I2', 'a', 'nturns', 'mu0', 'Bmax'})
 
@@ -86,21 +86,39 @@ B_fit2 = magFieldCoil_fit_v2( c1, c2, I1, I2, a, nturns, mu0, Bmax, x_fit, y_fit
 % best fit found by fit_3()
 
 % for u1_1_9_u2_0
-c0 = 0.8026 ; 
-c1 = 2.347 ; 
-c2 = 0.7705 ; 
-c3 = 0.2539 ; 
-c4 = 51.86 ; 
-c5 = -153.3 ; 
-c6 = 1.412 ; 
-c7 = -4.613 ; 
-c8 = 1.052 ; 
-c9 = 30.29 ; 
-c10 = -83.28 ; 
-c11 = -179.9 ; 
+c0 = 0.7919 ; 
+c1 = 0.2239 ; 
+c2 = -0.1472 ; 
+c3 = 0.08785 ; 
+c4 = 0.498 ; 
+c5 = 2.249 ; 
 
-B_fit3 = magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, c6, c7, ...
-    c8, c9, c10, c11, I1, I2, a, nturns, mu0, Bmax, x_fit, y_fit) ; 
+% c0 = 0.7867 ; 
+% c1 = 0.8595 ; 
+% c2 = -12.26 ; 
+% c3 = 0.0724 ; 
+% c4 = 2.857 ; 
+% c5 = 12.61 ; 
+
+% c0 = 0.7799 ; 
+% c1 = 0.699 ; 
+% c2 = 0.1161 ; 
+% c3 = 2.142 ; 
+
+% c0 = 0.8026 ; 
+% c1 = 2.347 ; 
+% c2 = 0.7705 ; 
+% c3 = 0.2539 ; 
+% c4 = 51.86 ; 
+% c5 = -153.3 ; 
+% c6 = 1.412 ; 
+% c7 = -4.613 ; 
+% c8 = 1.052 ; 
+% c9 = 30.29 ; 
+% c10 = -83.28 ; 
+% c11 = -179.9 ; 
+
+B_fit3 = magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, I1, I2, a, nturns, mu0, Bmax, x_fit, y_fit) ; 
 
 % model with no fit
 [gx, gy, Bx, By, B_model, Bxcheck] = magFieldCoil(coils,mu0,...
