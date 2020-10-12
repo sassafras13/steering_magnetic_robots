@@ -30,12 +30,13 @@ function [gx, gy, gBx, gBy, gB] = magGradientCoil(coils,mu0,positionArray,n,gBma
     %
     %   gB :- magnitude of magnetic field gradient at each position in 2D
     %   space as defined by positionArray
+    global a d nturns 
     
     I1 = coils(1,1) ;
     I2 = coils(2,1) ;
-    a = coils(3,1) ; % radius 
-    d = coils(4,1) ; 
-    nturns = coils(5,1) ;  
+%     a = coils(3,1) ; % radius 
+%     d = coils(4,1) ; 
+%     nturns = coils(5,1) ;  
     
     xmin = positionArray(2,1) ; 
     xmax = positionArray(3,1) ; 

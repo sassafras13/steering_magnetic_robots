@@ -1,6 +1,22 @@
 function [X,Y,avgdata] = plotBFieldData(directory,filenameGeneric,nfiles,rawOn,nfig)
-    % plotBFieldData plots all the Bfield data for one configuration on a
-    % 3D plot
+    % plotBFieldData Plots all the Bfield data for one configuration on a
+    % 3D plot.
+    % 
+    % Inputs:
+    %   directory :- directory containing raw data
+    % 
+    %   filenameGeneric :- start of filenames containing raw data for the
+    %   same field configuration
+    %
+    %   nfiles :- number of files of raw data for the same field
+    %   configuration
+    %
+    %   rawOn :- 1 or 0 to plot raw data or not.
+    %
+    %   nfig :- output figure number.
+    %
+    % Outputs: 
+    %   Outputs a figure that shows experimental data. 
     
     len = 14 * 11 ; % number of data points per file
     data = zeros(len,nfiles) ; % contains values from all files, each column is a different file

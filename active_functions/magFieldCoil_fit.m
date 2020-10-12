@@ -1,4 +1,5 @@
-function B_final = magFieldCoil_fit(I1, I2, a, nturns, mu0, Bmax, x, y)
+function B_final = magFieldCoil_fit_v3(c0, c1, c2, c3, c4, c5, c6, c7, ...
+    c8, c9, c10, c11, I1, I2, a, nturns, mu0, Bmax, x, y)
     % magFieldCoil_fit Calculate the magnetic field created by a pair of 
     % wire coils with current flowing through them via the Biot-Savart law.
     % For use with Matlab fit() function to find optimal fit parameters.
@@ -54,38 +55,28 @@ function B_final = magFieldCoil_fit(I1, I2, a, nturns, mu0, Bmax, x, y)
         By2 = ByHH(xi2,yi2,mu0,nturns,I2,a,E2,K2) ;
         
         % sum 
-        Bx(i) = Bx1 + Bx2 ; 
-        By(i) = By1 + By2 ; 
+        Bx(i) = (c0 + c1*gx(i) + c2*gy(i) + c3*gx(i)*gy(i) + ...
+            c4*(gx(i)^2) + c5*(gy(i)^2)) * (Bx1 + Bx2) ; 
+        By(i) = (c6 + c7*gx(i) + c8*gy(i) + c9*gx(i)*gy(i) + ...
+            c10*(gx(i)^2) + c11*(gy(i)^2)) * (By1 + By2) ; 
+
+%         Bx(i) = (c0 + c1*gx(i) + c2*(gy(i)^2)) * (Bx1 + Bx2) ; 
+%         By(i) = (c3*gy(i) + c4*gx(i)*gy(i) + c5*(gy(i)^2)) * (By1 + By2) ; 
+
+%         Bx(i) = (c0*gx(i) + c1*(gx(i)^2)) * (Bx1 + Bx2) ; 
+%         By(i) = (c2*gy(i) + c3*(gy(i)^2)) * (By1 + By2) ; 
         
     end
     
     Bx = reshape(Bx,size(gx,1),size(gx,2)) ; 
-%     Bx = [Bx(end:-1:2,:) ; Bx] ; 
     
     By = reshape(By,size(gx,1),size(gx,2)) ; 
     By = fillmissing(By,'constant',0) ; 
-%     By = [By(end:-1:2,:) ; By] ; 
     
     B = sqrt(Bx.^2 + By.^2) ;
-%     B = reshape(B, size(B,1), size(B,2)) ; 
-    
-%     gx = [gx(end:-1:2,:) ; gx] ; 
-%     gy = [gy ; -gy(end-1:-1:1,:)] ; 
-%     B = sign(Bx).*B ; 
-    
-%     xval = linspace(xmin,xmax,size(Bx,2)) ; 
-%     yval = linspace(-ymax,ymax,size(Bx,1)) ; 
-%     [gx,gy] = meshgrid(xval,yval) ; 
-    
-    % test along the x axis where we know the solution
-%     Bxcheck = zeros(size(gx,2),1) ; 
-%     for i = 1:size(gx,2)
-%         x = gx(1,i) ; 
-%         Bxcheck(i) = 0.5*nturns*mu0*I1*(a^2)*(coeff1*(1 /(sqrt(a^2 + (x-d)^2))^3) + coeff2*(1 /(sqrt(a^2 + (x+d)^2))^3)) ;
-% %         Bxcheck(i) = 0.5*nturns*mu0*I1*(a^2)*((1 /(sqrt(a^2 + (x-d)^2))^3) + (1 /(sqrt(a^2 + (x+d)^2))^3)) ;
-%     end
     
     B_final = interp2(gx, gy, B, x, y) ; 
     B_final(B_final>Bmax) = Bmax ; 
+
 
 end

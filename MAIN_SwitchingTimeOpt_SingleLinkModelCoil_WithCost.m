@@ -21,9 +21,9 @@ addpath(fullfile(localDir, 'active_functions')) ;
 %% Setup Variables
 
 % load macroswimmer data
-run VAR_SingleLinkModelCoil.m ; 
-load('gBarray.mat') ; 
-load('Barray.mat') ; 
+run VARIABLES.m ; 
+load('MAT_gBarray.mat') ; 
+load('MAT_Barray.mat') ; 
 
 % define perturbation amount epsilon 
 epsi = [1E-4 ; 1E-4 ; 1E-6 ; 1E-5] ; % perturbation of state variables 
@@ -31,8 +31,8 @@ alpha0 = 1E6 ; % step size
 gamma = 0.90 ; % update parameter for refining alpha
 
 % define initial guess at tau values
-tau = [0,160,250,350,450] ; % [s]
-% tau = [0,80,110,180,350] ; 
+% tau = [0,160,250,350,450] ; % [s]
+tau = [0,80,110,180,350] ; 
 tau_old = 0 ; 
     
 % start location

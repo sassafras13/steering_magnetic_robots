@@ -21,9 +21,9 @@ addpath(fullfile(localDir, 'active_functions')) ;
 %% Setup Variables
 
 % load macroswimmer data
-run VAR_SingleLinkModelCoil.m ; 
-load('gBarray.mat') ; 
-load('Barray.mat') ; 
+run VARIABLES.m ; 
+load('MAT_gBarray.mat') ; 
+load('MAT_Barray.mat') ; 
 
 % define perturbation amount epsilon 
 epsi = [1E-4 ; 1E-4 ; 1E-6 ; 1E-5] ; % perturbation of state variables 

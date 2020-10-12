@@ -1,0 +1,175 @@
+% MAIN_04_DragGradDescent.m
+% Purpose: Use gradient descent to calculate the drag coefficient for the
+% macroswimmer.
+% Author: Emma Benjaminson
+
+%% Variables
+
+% load macroswimmer data
+load('MAT_Barray.mat') ; 
+load('MAT_gBarray.mat') ; 
+
+% load experimental data indices of origins
+localDir = fileparts(mfilename('fullpath')) ;
+directory = fullfile(localDir, '/experimental_data') ; 
+filename = 'mpA' ; 
+[indices, origins] = extractIndOr(directory,filename) ; 
+
+% load all experimental data for a particular motion primitive
+filename_exp_data = 'mpA-CompositeData' ; 
+loadExpData(indices, origins, directory, filename_exp_data, 0)
+
+%%%%%%%%%% USER DEFINED VALUE %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% select experimental data
+% index = 1 ; % index of the trial to plot
+
+% waypoint times - when the swimmer changes direction
+waypointT = [0,170] ; % [s] for mpA
+
+% n = size(posx{index},1) ; % number of points 
+% n = 47 ;
+
+% number of primitives in trajectory
+niter = 1 ; 
+
+% initial conditions (USER DEFINES THETA!)
+y0 = [meanposx(1,1) ; meanposy(1,1) ; pi/2 ; 0 ; 0 ; 0 ]  ;
+
+% control inputs
+I1 = [1.9] ; % [A] current
+I2 = [0] ; % [A] current
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Gradient Descent Loop
+
+theta_new = 0.5E-1 ; % starting guess for theta
+theta_old = 0 ; % this parameter will store old values for gradient descent update
+
+i = 1 ; % iteration counter
+min_iter = 300 ; % minimum number of iterations
+
+% tuning parameters
+eps_perturb = 5E-3; % perturbation amount for central diff method [TUNE]
+alpha = 0.4 ; % learning rate 
+gamma = 0.99 ; 
+epsTheta = 1E-6 ; % threshold for when while loop will end [TUNE]
+
+% plot values of theta vs iteration counter
+figure(3)
+plot(0,theta_new,'ob') 
+hold on
+
+% gradient descent while loop
+while i < min_iter
+
+    theta_old = theta_new ; % save new value of theta to be used in this iteration
+    
+    %%%%%%%%%%%%
+    % Hypothesis
+    %%%%%%%%%%%%
+    
+    disp('\n RUNNING CALCULATION FOR HYPOTHESIS. \n') ; 
+
+    % run ode15s for the same time span as the experimental data that we have,
+    % and the current drag coefficient
+    [x,y] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_old,Barray{1},gBarray{1}) ;
+    
+    % plot hypothesis and variations
+    figure(1)
+    plot(x,y,'-k')
+    hold on
+
+    %%%%%%%%%%%%%%%
+    % Cost Function
+    %%%%%%%%%%%%%%%
+    J = costFunc([x,y],[meanposx,meanposy]) ; 
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Derivative of Cost Function
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % use central difference method
+    % need to calculate h for two different values of theta slightly perturbed
+    % from current theta then divide by 2 * delta theta
+
+    disp('\n RUNNING CALCULATION FOR H PLUS. \n') ; 
+    
+    % plus
+    theta_plus = theta_old + eps_perturb ; 
+    [xplus,yplus] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_plus,Barray{1},gBarray{1}) ; 
+    J_plus = costFunc([xplus,yplus],[meanposx,meanposy]) ; 
+    
+    disp('\n RUNNING CALCULATION FOR H MINUS. \n') ; 
+    
+    % minus
+    theta_minus = theta_old - eps_perturb ; 
+    [xminus,yminus]  = hsim(niter,waypointT,y0,mag,mass,w,L,theta_minus,Barray{1},gBarray{1}) ; 
+    J_minus = costFunc([xminus,yminus],[meanposx,meanposy]) ; 
+    
+    % plot variations on hypothesis
+    figure(1)
+    plot(xminus,yminus,'-r') 
+    hold on 
+    plot(xplus,yplus,'-b')
+    hold on
+    
+    % plot cost function values
+    figure(2)
+    plot(i,J,'ok')
+    hold on
+    plot(i,J_plus,'ob') 
+    hold on
+    plot(i,J_minus,'or') 
+
+    dJdtheta = (J_plus - J_minus) / (2*eps_perturb) ; 
+    
+    %%%%%%%%%%%%%%
+    % Choose Alpha
+    %%%%%%%%%%%%%%
+    Jnew = 1E9 ; 
+    iter = 2 ; 
+    
+    while Jnew > J
+        
+        % calculate new value of theta
+        theta_new = theta_old - alpha*dJdtheta  
+        
+        % forward simulate dynamics
+        disp('Calculating dynamics to update alpha') ; 
+        [x,y] = hsim(niter,waypointT,y0,mag,mass,w,L,theta_new,Barray{1},gBarray{1}) ;
+        
+        % calculate new cost function
+        Jnew = costFunc([x,y],[meanposx,meanposy]) ; 
+        
+        if Jnew > J
+            alpha = alpha^iter
+        end
+            
+        iter = iter + 1  
+    end 
+        
+    %%%%%%%%%%%%%%
+    % Update Theta
+    %%%%%%%%%%%%%%
+    theta_new = theta_old - alpha*dJdtheta  
+    
+    % plot theta value
+    figure(3)
+    plot(i,theta_new,'ok')
+    hold on
+    
+    i = i + 1  % update counter
+    
+end
+
+% add titles
+figure(1)
+title('Trajectories') 
+
+figure(2) 
+title('J values') ; 
+
+figure(3) 
+title('theta values') ; 

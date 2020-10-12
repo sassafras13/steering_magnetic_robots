@@ -31,7 +31,8 @@ function [gx, gy, Bx, By, B, Bxcheck] = magFieldCoil(coils,mu0,positionArray,Bma
     %
     %   Bxcheck :- analytical solution of magnetic field along center axis
     %   between coils. Only valid for Helmholtz coil configuration!
-
+    global a d nturns 
+    
     dx = positionArray(1,1) ; 
     xmin = positionArray(2,1) ; 
     xmax = positionArray(3,1) ; 
@@ -42,9 +43,9 @@ function [gx, gy, Bx, By, B, Bxcheck] = magFieldCoil(coils,mu0,positionArray,Bma
     
     I1 = coils(1,1) ; % [A] current
     I2 = coils(2,1) ; % [A] current
-    a = coils(3,1) ; % [m] radius 
-    d = coils(4,1) ; % [m] separation distance
-    nturns = coils(5,1) ; % number of turns
+%     a = coils(3,1) ; % [m] radius 
+%     d = coils(4,1) ; % [m] separation distance
+%     nturns = coils(5,1) ; % number of turns
     
     [coeff1, coeff2] = config(I1, I2) ; 
     

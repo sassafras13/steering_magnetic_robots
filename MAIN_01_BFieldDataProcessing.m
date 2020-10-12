@@ -4,24 +4,11 @@
 % Plots the data and compares to theoretical values.
 % Author: Emma Benjaminson
 
-%% 
 
-clc ; clear all ; close all ; 
-
-%% Directories
-
-localDir = fileparts(mfilename('fullpath')) ;
-restoredefaultpath ;
-addpath(fullfile(localDir, 'active_functions')) ;
-
-%% load variables
-
-run(fullfile(localDir,'VAR_BFieldDataProcessing.m')) ; 
-
-%% process experimental data
+%% Process Experimental Data
 
 % import all csvs for a particular configuration
-directory = '/home/emma/Documents/Research/TP11/Field Data' ; 
+directory = fullfile(localDir, '/experimental_data') ; 
 filenameGeneric = 'u1_1_9_u2_0' ; 
 % filenameGeneric = 'u1_1_9_u2_1_9' ; 
 % filenameGeneric = 'u1_1_9_u2_-1_9' ; 
@@ -43,7 +30,7 @@ plotBFieldData(directory,filenameGeneric,nfiles,rawOn,nfig) ;
 xlabel('X (cm)','Interpreter','latex','FontSize',12) ; 
 ylabel('Y (cm)','Interpreter','latex','FontSize',12) ; 
 zlabel('B (G)','Interpreter','latex','FontSize',12) ; 
-title('Coil Configuration: U1 = 1.9A, U2 = 1.9A','Interpreter','latex','FontSize',14) ; 
+title('Coil Configuration: U1 = 1.9A, U2 = 0A','Interpreter','latex','FontSize',14) ; 
 
 
 %% Figure 2: Compare to B field model
@@ -56,6 +43,10 @@ nfig = 2 ;
 
 % compute the model of the magnetic field
 Bmax = 2E-2 ; % [T] highest value of magnetic field allowed
+I1 = 1.9 ; 
+I2 = 0 ; 
+coils = [I1 ; I2 ; a ; d ; nturns] ; 
+
 [gx, gy, Bx, By, B, Bxcheck] = magFieldCoil(coils,mu0,positionArrayField,Bmax) ; % [T]
 % B = B * 1E3; % convert to mT
 % B = B * 10 ; % convert to G
@@ -85,26 +76,16 @@ gBmax = 10 ; % [mT] highest value of magnetic field gradient allowed
 % compute the gradient from the experimental data
 [x_gB, y_gB, gBx1, gBy1, gB] = magGradientCoil_exp(X, Y, avgdata) ; 
 
-% % check the gradient in x and y
-% X = reshape(X,[14,11]) ; 
-% Y = reshape(Y,[14,11]) ; 
-% avgdata = reshape(avgdata(:,1),[14,11]) ; 
-% [dx,dy] = gradient( avgdata ) ; 
-
-% % plot trajectory
-% directory = '/home/emma/Documents/Research/TP11/Sequence 1 v2' ; 
-% filename = 's1' ; 
-% [indices, origins] = extractIndOr(directory,filename) ; 
-% outputname = 's1-CompositeData' ; 
-% [Xq,meanposy,stdposy] = processExpData(indices, origins, ...
-%     directory, filename, outputname) ; 
+% check the gradient in x and y
+X = reshape(X,[14,11]) ; 
+Y = reshape(Y,[14,11]) ; 
+avgdata = reshape(avgdata(:,1),[14,11]) ; 
+[dx,dy] = gradient( avgdata ) ; 
 
 figure(3)
 quiver(gx2,gy2,gBx,gBy,3,'-b') % model
 hold on 
-% quiver(X,Y,dx,dy,3,'--r') % data
-% hold on
-quiver(x_gB, y_gB, gBx1, gBy1,3,'--g') % data with new function
+quiver(x_gB, y_gB, gBx1, gBy1,3,'-r') % data with new function
 hold on
 xlabel('X [m]','interpreter','latex','FontSize',12) ; 
 ylabel('Y [m]','interpreter','latex','FontSize',12) ;  

@@ -1,4 +1,4 @@
-function [meanposx,meanposy,stdposx,stdposy] = processExpData(indices, origins, directory, filename, outputname)
+function [meanposx,meanposy,stdposx,stdposy] = processExpData(indices, origins, directory, filename, outputname, fignum)
 
     time = {} ;        
     posx = {} ; 
@@ -8,7 +8,7 @@ function [meanposx,meanposy,stdposx,stdposy] = processExpData(indices, origins, 
     accx = {} ; 
     accy = {} ; 
 
-    figure(1) 
+    figure(fignum) 
 
     % import data
     for i = 1:length(indices)
@@ -62,16 +62,53 @@ function [meanposx,meanposy,stdposx,stdposy] = processExpData(indices, origins, 
 
     end
 
-    % calculate the mean for each data point in the cell arrays
-    posxdata = cell2mat(posx) ; 
-    posydata = cell2mat(posy) ; 
-    
-    % calculate averages across rows
-    meanposx = mean(posxdata,2) ; 
-    meanposy = mean(posydata,2) ; 
-    
-    stdposx = std(posxdata,0,2) ; 
-    stdposy = std(posydata,0,2) ; 
+    try
+        % calculate the mean for each data point in the cell arrays
+        posxdata = cell2mat(posx) ; 
+        posydata = cell2mat(posy) ; 
+
+        % calculate averages across rows
+        meanposx = mean(posxdata,2) ; 
+        meanposy = mean(posydata,2) ; 
+
+        stdposx = std(posxdata,0,2) ; 
+        stdposy = std(posydata,0,2) ; 
+    catch
+        warning('There must be the same number of entries in every trajectory file. Using interpolation method instead. May introduce additional error.') ; 
+        
+        % interpolate data so all arrays are the same length
+        % find the trial with the most data points
+        A = cellfun(@length,time) ; % find the number of points in each cell in the time cell array
+        [~,ind] = max(A) ; % ind is the index of the longest trial
+
+        % get the x-position data points
+        Xq = posx{ind} ; 
+        Xq = Xq + 1E-4*rand([max(A),1]) ; % add small amount of randomization to Xq to allow interp1 to run on unique values
+
+        % new y-position data
+        Yinterp = zeros( max(A), length(indices) ) ; % as many rows as longest cell and as many columns as trials
+        Yinterp(:,ind) = posy{ind} ; % the column for the longest trial is already known
+
+        % use the x-position data as the query points for all other arrays
+        for i = 1:length(indices) 
+            if i == ind
+                i = i + 1 ;  
+            end
+
+            posx{i} = posx{i} + 1E-4*rand([size(posx{i},1),1]) ; 
+            posy{i} = posy{i} + 1E-4*rand([size(posy{i},1),1]) ; 
+
+            % use interp1 to get new y-position data for all other arrays
+            Yinterp(:,i) = interp1(posx{i},posy{i},Xq,'linear') ; 
+
+        end
+
+        % find average values
+        meanposx = Xq ; 
+        stdposx = std(meanposx,0,2) ; 
+        meanposy = mean(Yinterp,2) ;
+        stdposy = std(Yinterp,0,2) ; 
+    end
     
     % save data to file
     headerA = ['meanposx (m) ', 'meanposy(m) ', 'stddevposx(m)','stddevposy(m) \n'] ; 
@@ -82,50 +119,8 @@ function [meanposx,meanposy,stdposx,stdposy] = processExpData(indices, origins, 
     fprintf( fid, headerA ) ; 
     fprintf(fid, '%.3f %.3f %.3f %.3f \n', A) ; 
     fclose(fid) ; 
-    
-%     % interpolate data so all arrays are the same length
-%     % find the trial with the most data points
-%     A = cellfun(@length,time) ; % find the number of points in each cell in the time cell array
-%     [~,ind] = max(A) ; % ind is the index of the longest trial
-%     
-%     % get the x-position data points
-%     Xq = posx{ind} ; 
-%     Xq = Xq + 1E-4*rand([max(A),1]) ; % add small amount of randomization to Xq to allow interp1 to run on unique values
-%     
-%     % new y-position data
-%     Yinterp = zeros( max(A), length(indices) ) ; % as many rows as longest cell and as many columns as trials
-%     Yinterp(:,ind) = posy{ind} ; % the column for the longest trial is already known
-%     
-%     % use the x-position data as the query points for all other arrays
-%     for i = 1:length(indices) 
-%         if i == ind
-%             i = i + 1 ;  
-%         end
-%         
-%         posx{i} = posx{i} + 1E-4*rand([size(posx{i},1),1]) ; 
-%         posy{i} = posy{i} + 1E-4*rand([size(posy{i},1),1]) ; 
-%         
-%         % use interp1 to get new y-position data for all other arrays
-%         Yinterp(:,i) = interp1(posx{i},posy{i},Xq,'linear','extrap') ; 
-%         
-%     end
-%         
-%     % find average values
-%     meanposy = mean(Yinterp,2) ;
-%     stdposy = std(Yinterp,0,2) ; 
-%     
-%     % save data to file
-%     headerA = ['Xq (m) ', 'meanposy(m) ', 'stddevposy \n'] ; 
-%     
-%     A = [Xq, meanposy, stdposy]' ; 
-%     
-%     fid = fopen( sprintf('%s/%s.csv',directory,outputname), 'w' ) ; 
-%     fprintf( fid, headerA ) ; 
-%     fprintf(fid, '%.3f %.3f %.3f \n', A) ; 
-%     fclose(fid) ; 
-% 
-%     % add averaged trajectory with std dev to figure 1
-%     figure(1)
-%     errorbar(Xq,meanposy,stdposy,stdposy,'-k')
-  
+
+    % add averaged trajectory with std dev to figure 
+    figure(fignum)
+    errorbar(meanposx,meanposy,stdposy,stdposy,'-r')
 end

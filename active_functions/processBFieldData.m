@@ -2,6 +2,16 @@ function processBFieldData(directory,filenameGeneric,nfiles)
     % processBFieldData pulls in all data collected under a particular
     % filenameGeneric format and calculates the average and standard
     % deviation for every point in those files
+    % 
+    % Inputs: 
+    %   directory :- directory name
+    %
+    %   filenameGeneric :- the prefix of the series of files to analyze
+    %
+    %   nfiles :- the number of files to analyze
+    %
+    % Outputs: 
+    %   A single stats file output to the same experimental data file. 
     
     len = 14 * 11 ; % number of data points per file
     data = zeros(len,nfiles) ; % contains values from all files, each column is a different file
