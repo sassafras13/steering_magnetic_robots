@@ -31,7 +31,7 @@ run(fullfile(localDir,'MAIN_01_BFieldDataProcessing.m')) ;
 % This section computes average trajectories over multiple runs. The data
 % is obtained using the particle tracking tools in ImageJ. 
 
-% run(fullfile(localDir,'MAIN_02_ExpDataProcessing.m')) ; 
+run(fullfile(localDir,'MAIN_02_ExpDataProcessing.m')) ; 
 
 %% 3: Generate Magnetic Field Data
 % This section generates the magnetic field data for each coil
@@ -43,7 +43,7 @@ run(fullfile(localDir, 'MAIN_03_GenerateFieldData.m')) ;
 % This section runs gradient descent to fit the drag coefficient to the
 % experimental data. 
 
-% run(fullfile(localDir, 'MAIN_04_DragGradDescent.m')) ; 
+run(fullfile(localDir, 'MAIN_04_DragGradDescent.m')) ; 
 
 %% 5: Compute Swimmer Dynamics
 % Plot the swimmers' motion for the chosen control sequence. 
@@ -54,3 +54,8 @@ run(fullfile(localDir, 'MAIN_05_DynamicsModel.m')) ;
 % Plot the results from the dynamics simulation. 
 
 run(fullfile(localDir, 'MAIN_06_PlotDynamics.m')) ; 
+
+%% 7: Switching Time Optimization
+% Run the switching time optimization script to plan a control sequence.
+
+run(fullfile(localDir, 'MAIN_07')) ; 

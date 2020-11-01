@@ -1,4 +1,4 @@
-% MAIN_SwitchingTimeOpt_SingleLinkModelCoil.m
+% MAIN_07_SwitchingTimeOpt_SingleLinkModelCoil.m
 % Purpose: Implement switching time optimization for macroswimmer gradient
 % steering project. Includes a terminal cost to the cost function and
 % applies weights to running and terminal costs. 
@@ -8,8 +8,8 @@
 % [1] Johnson, E and Murphey, T. "Second-Order Switching Time Optimization
 % for Nonlinear Time-Varying Dynamic Systems." IEEE Trans on Auto. Control,
 % vol 56(8), August 2011. 
-%% 
 
+%%
 clc ; clear all ; close all ; 
 
 %% Directories
@@ -30,8 +30,7 @@ epsi = [1E-4 ; 1E-4 ; 1E-6 ; 1E-5] ; % perturbation of state variables
 alpha0 = 1E6 ; % step size
 gamma = 0.90 ; % update parameter for refining alpha
 
-% define initial guess at tau values
-% tau = [0,160,250,350,450] ; % [s]
+% define initial guess at switching times (i.e. tau values)
 tau = [0,80,110,180,350] ; 
 tau_old = 0 ; 
     
@@ -39,44 +38,21 @@ tau_old = 0 ;
 y0start = [-0.02 , 0.04 , pi/2 , 0 , 0 , 0]' ; 
     
 % goal location 
-xd = [0.02 ; 0.02 ; 0 ; 0] ; 
-% xd = [-0.01 ; 0.03 ; 0 ; 0] ; 
+xd = [-0.01 ; 0.03 ; 0 ; 0] ; 
 
 % create desired trajectories
-nwaypoints = 2 ; 
-xwaypoints = [y0start(1:2)' ; ones(nwaypoints,2) ; xd(1:2)'] ; 
+nwaypoints = 2 ; % for computing trajectories
+% xwaypoints = [y0start(1:2)' ; ones(nwaypoints,2) ; xd(1:2)'] ; 
 
-% % set the waypoints (i.e. points where trajectory changes direction)
-% for i = 1:nwaypoints
-%     if rem(i,2) == 1 % if i is odd
-%         xwaypoints(i+1,1) = xd(1) ; 
-%         xwaypoints(i+1,2) = y0start(2) - ( i * (y0start(2) - xd(2)) / (nwaypoints + 1) ) ; 
-%     elseif rem(i,2) == 0 
-%         xwaypoints(i+1,1) = y0start(1) ; 
-%         xwaypoints(i+1,2) = y0start(2) - ( i * (y0start(2) - xd(2)) / (nwaypoints + 1) ) ; 
-%     end
-% end
-%     
-% npoints = 100 ; 
-% xd_t = [] ; 
-% td = [] ; 
-% 
-% % fill in points along the trajectory between waypoints
-% for i = 1:(nwaypoints+1)
-%     xd_x = linspace(xwaypoints(i,1),xwaypoints(i+1,1),npoints) ; 
-%     xd_y = linspace(xwaypoints(i,2),xwaypoints(i+1,2),npoints) ; 
-%     xd_t = [xd_t ; [xd_x', xd_y']] ; 
-%     
-%     td_i = linspace(tau(i),tau(i+1),npoints) ; 
-%     td = [td , td_i] ; 
-% end
-% 
-% xd_t = [xd_t , zeros(size(xd_t,1),2) ] ; 
-
-% plot desired trajectory to check
+% plot trajectories for each iteration and goal location
 figure(1)
 plot(xd(1),xd(2),'ok','MarkerSize',8,'MarkerFaceColor','k') ; 
 hold on 
+title('Trajectories')
+xlabel('Z (m)','interpreter','latex','FontSize',32) ; 
+ylabel('X (m)','interpreter','latex','FontSize',32) ; 
+legend('Goal Location') ; 
+grid on
 
 % define weights for cost function
 w1 = [1,1,0,0] ; % weight for running cost
@@ -100,16 +76,15 @@ niter = 6 ;
 normArray = zeros(niter,1) ; 
 
 % continue to update tau_i until convergence condition is met: 
-while norm([dJdtau]) > 1E-6 
-% while iter < niter
+while norm([dJdtau]) > 1E-6 % dJdtau varies less than 1E-6
+% while iter < niter % maximum number of iterations have been computed
     
     % forward simulate the dynamics for current values of tau
     % OutputFcn saves time array and qdot 
-    
     tic
     
     %%%%% NORMAL %%%%%
-    disp('Calculate normal') ;
+    disp('Calculate normal trajectory') ;
     ynom = [] ; 
     tnom = [] ; 
     
@@ -136,30 +111,29 @@ while norm([dJdtau]) > 1E-6
         color = [(0.5 - 0.05*(iter-1)) 0.2 0.6] ;
     end
     
-%     if or( iter == 1, (rem(iter,10) == 0) ) 
-        figure(1)
-        plot(ynom(:,1),ynom(:,2),'-','LineWidth',width,'Color',color) ; % trajectory
-        hold on
-        plot(ynom(end,1),ynom(end,2),'o','MarkerSize',5,'MarkerFaceColor',color,'MarkerEdgeColor',color) ; % end point
-        hold on
-%     end
+    figure(1)
+    plot(ynom(:,1),ynom(:,2),'-','LineWidth',width,'Color',color) ; % trajectory
+    hold on
+    plot(ynom(end,1),ynom(end,2),'o','MarkerSize',5,'MarkerFaceColor',color,'MarkerEdgeColor',color) ; % end point
+    hold on
     
     % update before truncating
     ynom_old = ynom ; 
     tnom_old = tnom ; 
     
     % truncate ynom to 4 state variables
+    % my full dynamics function computes x, y and theta, and their
+    % derivatives, but for this implementation I am only considering x, y
+    % and their derivatives. So we do not account for theta, thetadot.
     ynom = ynom(:,[1,2,4,5]) ; 
     ydot_0 = [ydot_0_1([1,2,4,5],:)' ;
               ydot_0_2([1,2,4,5],:)' ; 
               ydot_0_3([1,2,4,5],:)' ]; 
-%               ydot_0_4([1,2,4,5],:)' ] ; 
           
-    % concatenate time array
+    % concatenate time array - saved by outputfcn
     timeArray_0 = [timeArray_0_1' ; 
                    timeArray_0_2' ; 
                    timeArray_0_3' ]; 
-%                    timeArray_0_4' ] ; 
 
     % calculate Xi for each transition
     Xi = zeros((size(tau,2)-1),size(ynom,2)) ; 
@@ -175,7 +149,6 @@ while norm([dJdtau]) > 1E-6
     % psi0 (initial condition for psi) is equal to derivative of the
     % terminal cost m(x,tf)
     psi0 = dmdx(ynom,xd,w2,epsi) ; 
-%     psi0 = zeros(4,1) ; 
     
     % backwards integrate psi_dot
     options = odeset('RelTol',1E0,'AbsTol',1E0) ; 
@@ -194,29 +167,25 @@ while norm([dJdtau]) > 1E-6
     end
 
     % perform steepest descent to update tau_i
-    dJdtau
     tau 
-    H = eye(size(tau,2)-1) ; 
+    H = eye(size(tau,2)-1) ; % for first order derivative, H = identity matrix
     tau_old = tau ; 
     
     % choose an effective value of alpha
     % calculate the current value of J
-%     tspan = [tau(1) tau(end)] ; 
-%     J0 = 0 ; 
-%     [t,J] = ode15s(@(t,J) Jfunc(t,J,tnom,ynom,td,xd_t,w1), tspan, J0) ;
-%     J = sum(J) ; 
     J = costFunc(ynom(end,:),xd,w1) 
     
     Jnew = 1E9 ; 
     i_alpha = 1 ; 
     alpha = alpha0 ; 
     
-    % loop through until we find a good value of alpha
+    % loop through until we find a good value of alpha that decreases our
+    % cost, J, from the current value
     while Jnew > J
     
         % calculate new tau values
         tau_new = zeros( 1, (size(dJdtau,1)+1) ) ; 
-        tau_new(2:end) = tau(2:end) + ((alpha*inv(H)*dJdtau)')  
+        tau_new(2:end) = tau(2:end) + ((alpha*inv(H)*dJdtau)') ; 
 
         % forward simulate the new dynamics with these new tau values
 
@@ -242,17 +211,11 @@ while norm([dJdtau]) > 1E-6
         ynom_new = ynom_new(:,[1,2,4,5]) ;
 
         % calculate the new value of J
-%         tspan = [tau_new(1) tau_new(end-1)] ; 
-%         J0 = 0 ; 
-%         [t,Jnew] = ode15s(@(t,J) Jfunc(t,J,tnom_new,ynom_new,td,xd_t,w1), tspan, J0) ;
-%         Jnew = sum(Jnew)  
-
         Jnew = costFunc(ynom_new(end,:),xd,w1) 
         
         % if new J is greater than the current value of J, decrease alpha by
         % alpha ^i
         if Jnew > J
-%             alpha = alpha^(-i_alpha) 
             alpha = alpha * ( gamma ^ i_alpha) 
         end
        
@@ -261,26 +224,7 @@ while norm([dJdtau]) > 1E-6
     
     
     tau(2:end) = tau(2:end) + ((alpha*inv(H)*dJdtau)') 
-    normArray(iter,1) = norm(dJdtau) ; 
-    
-%     if or( iter == 1, (rem(iter,10) == 0) ) 
-        figure(2)
-        title('dJdtau') ;
-        hold on
-        for i = 1:size(dJdtau,1)
-            plot(iter,dJdtau(i),'-ok') 
-        end
-        hold on
-
-        figure(3)
-        title('tau')  ;
-        hold on
-        for i = 1:size(tau,2) 
-            plot(iter,tau(i),'-ok') 
-        end
-        hold on 
-%     end
-    
+    normArray(iter,1) = norm(dJdtau) ;     
     iter = iter + 1 
     
 end
@@ -289,14 +233,6 @@ norm(dJdtau)
 
 tau
 
-figure(4)
-plot(normArray)
-xlabel('Iteration') ; ylabel('Norm of dJdtau') ; 
-
-figure(1)
-xlabel('Z (m)','interpreter','latex','FontSize',32) ; 
-ylabel('X (m)','interpreter','latex','FontSize',32) ; 
-grid on
 
 %% Function Definitions
 
@@ -305,8 +241,8 @@ function ydot = dynFunc(t,y,tau,mag,mass,w,L,ct,cn,Barray,gBarray)
     if size(tau,2) > 1 
 
         % find out which mode we are in based on current time and apply
-        % appropriate dynamics 
-        if and( (t >= tau(1)), (t <= tau(2)) ) % there must be a better way to do this than hard-coding in the indices of tau?
+        % appropriate magnetic field 
+        if and( (t >= tau(1)), (t <= tau(2)) ) 
             Barray_i = Barray{1} ; 
             gBarray_i = gBarray{1} ; 
         elseif and( (t > tau(2)), (t <= tau(3)) )
@@ -366,16 +302,10 @@ end
     
 function psidot = psiFunc(t_psi,psi,tnom,ynom,tdotnom,ydotnom,mag,mass,w,L,ct,cn,Barray,gBarray,tau,epsi)
     
-    % use central diff method to find dldx
-%     dldx = dldxFunc(t_psi,tnom,ynom,td,xd_t,epsi,w1) ;
-    
     % use forward diff method to find dfdx
     dfdx = dfdxFunc(t_psi,tnom,ynom,tdotnom,ydotnom,epsi,mag,mass,w,L,ct,cn,Barray,gBarray,tau)  ;
-
-    t_psi ;
-    psi ;
+    
     % calculate psidot
-%     psidot = -dldx' - (psi'*dfdx) ;
     psidot = 0 - (psi'*dfdx)  ;
     psidot = psidot' ;
 end
@@ -470,9 +400,6 @@ function psi0 = dmdx(ynom,xd,w2,epsi)
     xnom = ynom(k,:) ; % this is the nominal value of the state variables at time t_psi  
     
     % need to perturb the costFunc about each state variable individually
-    % calculate dl 
-    % calculate dldx
-    % return vector dldx
     psi0 = zeros( size(ynom,2),1 ) ; 
     
     for i = 1:size(ynom,2)
@@ -489,9 +416,6 @@ function psi0 = dmdx(ynom,xd,w2,epsi)
 end
 
 function qdot = singleDynamicsCoilLtd(t,q,mag,mass,w,L,ct,cn,Barray,gBarray) 
-    
-%     disp('time') ; 
-%     disp(t); 
     
     %%%%%%%%%%%%%%%%%
     % state variables
